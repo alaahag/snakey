@@ -27,8 +27,8 @@ header {
 
 #grid-container {
     display: grid;
-    grid-template-columns: repeat(50, 2%);
-    grid-template-rows: repeat(50, 2%);
+    grid-template-columns: repeat(25, 4%);
+    grid-template-rows: repeat(25, 4%);
     height: 100%;
     border: 2px solid black;
     background: url('../images/back.jpg');
@@ -36,17 +36,20 @@ header {
 }
 
 .cell {
-    animation:blinkingText 1s infinite;
-    font-size: 80%;
+    animation:blinkingText 0.5s infinite;
+    font-size: 1.5vh;
     font-weight: bolder;
-    border-radius: 6px;
+    border-radius: 15px;
+    background-position: center center;
+    background-size: 99%;
+    background-repeat: no-repeat;
 }
 
 @keyframes blinkingText {
     0% { color: black; }
     49% { color: black; }
-    60%{ color: transparent; }
-    99%{ color:transparent; }
+    60%{ background-size: 92%; }
+    99%{ background-size: 96%; }
     100%{ color: black; }
 }
 

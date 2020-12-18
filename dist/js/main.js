@@ -12,12 +12,22 @@ const fixedPageSize = function() {
     return grid;
 };
 
-$(window).resize(function() {
+const preloadImage = function(url) {
+    const img=new Image();
+    img.src = url;
+    return img;
+};
+
+const SYMBOL = preloadImage("../images/apple.png");
+
+$(window).on("resize", function() {
     fixedPageSize();
 });
 
+fixedPageSize();
+
 //important: if you change cell-sizes, make sure to modify also the styles grid
-const board = new Snake(fixedPageSize(), 50);
+const board = new Snake(25);
 $("#btn_one_player").on("click", function() {
     board.startGame(1);
 });

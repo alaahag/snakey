@@ -18,7 +18,9 @@ $("body").swipe({
                 board.movePlayer(1, "right");
                 break;
         }
-    }
+    },
+    threshold:0,
+    fingers:'all'
 });
 
 $(document).on('keydown', function(e) {

@@ -1,15 +1,12 @@
 class Snake {
-    constructor(grid, size) {
+    constructor(size) {
         //defaults:
         this.start = false;
-        this.col = size;
-        this.row = size;
-        this.grid = grid;
+        this.col_row = size; //should be the same size
         this.whiteSpace = "rgba(0, 0, 0, 0)"; //white color is the default white-space
-        this.speed = 60; //milliseconds
         this.p1Color = "rgb(46, 153, 247)"; //if u don't like the colors, you can change it only here
         this.p2Color = "rgb(240, 81, 44)"; //if u don't like the colors, you can change it only here
-        this.collectSymbol = "💍"; //icon of "apple"
+        this.collectSymbol = SYMBOL.src;
         this.player = []; //player[1] + player[2]
         this.interval1 = null;
         this.interval2 = null;
@@ -17,9 +14,7 @@ class Snake {
 
         $("#score_p1").css("color", this.p1Color);
         $("#score_p2_or_highest").css("color", this.p2Color);
-
-        //this.generateMatrix(this.col, this.row);
-        this.generateCells(this.col, this.row);
+        this.generateCells(this.col_row);
     }
 
     initPlayer(playerNum) {
@@ -30,6 +25,8 @@ class Snake {
     startGame(playersNum=1) {
         $("#menu").fadeOut();
         $("#score_p1").text("0");
+
+        this.modifySpeed($("#difficulty").find(":selected").val());
 
         if (playersNum === 2) {
             $("#label_p1").text("P1 Score: ");
@@ -47,14 +44,13 @@ class Snake {
             this.interval1 = setInterval(() => {this.autoMove(1);}, this.speed);
         }
 
-        this.modifySpeed($("#difficulty").find(':selected').val());
         this.start = true;
     }
 
     resetGame() {
         $("#game_over").fadeOut();
         $("#menu").fadeIn();
-        $(".cell").css("background-color", "rgba(0, 0, 0, 0)").text("");
+        $(".cell").css("background-color", "rgba(0, 0, 0, 0)").css("background-image", "none");
         delete this.player;
         this.player = [];
         this.start = false;
@@ -67,10 +63,10 @@ class Snake {
         $("#game_over").fadeIn();
     }
 
-    generateCells(colNum, rowNum) {
-        for (let row=0; row<rowNum; row++) {
-            for (let col=0; col<colNum; col++) {
-                this.grid.append(`<div class="cell c${col}_${row}"></div>`);
+    generateCells(colRowNum) {
+        for (let row=0; row<colRowNum; row++) {
+            for (let col=0; col<colRowNum; col++) {
+                $("#grid-container").append(`<div class="cell c${col}_${row}"></div>`);
             }
         }
     }
@@ -79,12 +75,12 @@ class Snake {
         //generate random apple and put it on screen
         let checkFreeCell;
         while (true) {
-            const col = Math.floor(Math.random() * this.col);
-            const row = Math.floor(Math.random() * this.row);
+            const col = Math.floor(Math.random() * this.col_row);
+            const row = Math.floor(Math.random() * this.col_row);
             checkFreeCell = $(`.c${col}_${row}`);
             if (checkFreeCell.css("background-color") === this.whiteSpace) {
-                if (checkFreeCell.text() === "") {
-                    checkFreeCell.text(this.collectSymbol);
+                if (checkFreeCell.css("background-image") === "none") {
+                    checkFreeCell.css("background-image", "url(" + this.collectSymbol + ")");
                     break;
                 }
             }
@@ -106,16 +102,16 @@ class Snake {
         const head = this.player[playerNum].snakeStack.length-1;
 
         //detect hitting borders or snakes (game over)
-        if (this.player[playerNum].pos.col < 0 || this.player[playerNum].pos.col > this.col-1 ||
-            this.player[playerNum].pos.row < 0 || this.player[playerNum].pos.row > this.row-1 ||
-            this.player[playerNum].snakeStack[head].css('background-color') !== this.whiteSpace) {
+        if (this.player[playerNum].pos.col < 0 || this.player[playerNum].pos.col > this.col_row-1 ||
+            this.player[playerNum].pos.row < 0 || this.player[playerNum].pos.row > this.col_row-1 ||
+            this.player[playerNum].snakeStack[head].css("background-color") !== this.whiteSpace) {
                 this.gameOver();
                 return -1;
             }
 
         //detect apple (collect and add a new random apple on screen and increase snake length)
-        if (this.player[playerNum].snakeStack[head].text() !== "") {
-            this.player[playerNum].snakeStack[head].text("");
+        if (this.player[playerNum].snakeStack[head].css("background-image") !== "none") {
+            this.player[playerNum].snakeStack[head].css("background-image", "none");
             this.player[playerNum].score+=10;
             this.updateScore(playerNum);
             this.createApple();
@@ -132,7 +128,7 @@ class Snake {
 
             //default values if not sent to the method:
             if (pos === undefined)
-                pos = {col: 48, row: 48};
+                pos = {col: this.col_row-2, row: this.col_row-2};
 
             if (dir === undefined)
                 dir = "left";
@@ -142,7 +138,7 @@ class Snake {
 
             //default values if not sent to the method:
             if (pos === undefined)
-                pos = {col: 2, row: 1};
+                pos = {col: 1, row: 1};
 
             if (dir === undefined)
                 dir = "right";
