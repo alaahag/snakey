@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <link rel="icon" type="image/png" href="./icon.png">
+    <title>Snakey | Classic Snake Game</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href='./css/styles.css' rel='stylesheet' type='text/css'>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <script src="./js/jquery-3.5.1.min.js"></script>
+    <script src="./js/jquery.touchSwipe.min.js"></script>
+    <script src='./js/snake.js'></script>
+</head>
+<body>
+    <header>
+        <div><span id="label_p1">Score: </span><span id="score_p1">0</span></div>
+        <div><span id="label_p2_or_highest">Highest: </span><span id="score_p2_or_highest">0</span></div>
+    </header>
+    <div id="grid-container"></div>
+    <div id="menu">
+        <span id="menu_title">Snakey</span>
+        <button id="btn_one_player">1 Player</button>
+        <button id="btn_two_player">2 Players</button>
+        <span id="credits">Game by MasterX</span>
+        <select id="difficulty" name="difficulty" class="select-css noSwipe">
+            <option value="60">Easy</option>
+            <option value="40">Normal</option>
+            <option value="20">Hard</option>
+            <option value="1">Insane</option>
+        </select>
+    </div>
+    <div id="game_over">
+        <span id="game_over_title">Game Over !</span>
+        <button id="btn_play_again">Try Again</button>
+    </div>
+    <script src='./js/controls.js'></script>
+    <script src='./js/main.js'></script>
+</body>
+</html>
