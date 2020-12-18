@@ -1,0 +1,27 @@
+{
+  "name": "snakey-game",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Ala H.Yahya (MasterX)",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jquery": "^3.5.1",
+    "jquery-touchswipe": "^1.6.19",
+    "mongoose": "^5.11.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alaahag/snakey.git"
+  },
+  "description": "A Javascript game (using jQuery)",
+  "bugs": {
+    "url": "https://github.com/alaahag/snakey/issues"
+  },
+  "homepage": "https://github.com/alaahag/snakey#readme",
+  "devDependencies": {}
+}
