@@ -1,2 +1,4 @@
 # Snakey (Game)
-A javascript game (using jQuery) without using Canvas ;)
+A Javascript game (using jQuery)
+
+Without using the power of Canvas ;)
