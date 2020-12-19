@@ -1,7 +1,8 @@
 class Snake {
-    constructor(size) {
+    constructor(boardSize) {
         this.start = false;
-        this.col_row = size; //row and col should be the same size
+        this.col = boardSize.width;
+        this.row= boardSize.height;
         this.whiteSpace = "rgba(0, 0, 0, 0)"; //white color is the default white-space
         this.p1Color = "rgb(201, 190, 12)"; //if u don't like the snake's box colors, you can change it only here
         this.p2Color = "rgb(191, 234, 82)"; //if u don't like the snake's box colors, you can change it only here
@@ -9,7 +10,15 @@ class Snake {
         this.interval1 = null;  //for each player
         this.interval2 = null;
 
-        this.generateCells(this.col_row);
+        this.generateCells(this.col, this.row);
+    }
+
+    generateCells(colNum, rowNum) {
+        for (let row=0; row<rowNum; row++) {
+            for (let col=0; col<colNum; col++) {
+                $("#grid-container").append(`<div class="cell c${col}_${row}"></div>`);
+            }
+        }
     }
 
     initPlayer(playerNum) {
@@ -54,7 +63,7 @@ class Snake {
     }
 
     gameOver() {
-        sounds.game_over.play();
+        SOUNDS.game_over.play();
         clearInterval(this.interval1);
         clearInterval(this.interval2);
         $("#game_over").fadeIn();
@@ -81,20 +90,12 @@ class Snake {
         }
     }
 
-    generateCells(colRowNum) {
-        for (let row=0; row<colRowNum; row++) {
-            for (let col=0; col<colRowNum; col++) {
-                $("#grid-container").append(`<div class="cell c${col}_${row}"></div>`);
-            }
-        }
-    }
-
     createApple() {
         //generate random apple and put it on screen
         let checkFreeCell;
         while (true) {
-            const col = Math.floor(Math.random() * this.col_row);
-            const row = Math.floor(Math.random() * this.col_row);
+            const col = Math.floor(Math.random() * this.col);
+            const row = Math.floor(Math.random() * this.row);
             checkFreeCell = $(`.c${col}_${row}`);
             if (checkFreeCell.css("background-color") === this.whiteSpace) {
                 if (checkFreeCell.css("background-image") === "none") {
@@ -115,15 +116,15 @@ class Snake {
             pSpan =$("#score_p2_or_highest");
 
         pSpan.text(this.player[playerNum].score);
-        sounds.collect.play();
+        SOUNDS.collect.play();
     }
 
     checkCollision(playerNum) {
         const head = this.player[playerNum].snakeStack.length-1;
 
         //detect hitting borders or snakes (game over)
-        if (this.player[playerNum].pos.col < 0 || this.player[playerNum].pos.col > this.col_row-1 ||
-            this.player[playerNum].pos.row < 0 || this.player[playerNum].pos.row > this.col_row-1 ||
+        if (this.player[playerNum].pos.col < 0 || this.player[playerNum].pos.col > this.col-1 ||
+            this.player[playerNum].pos.row < 0 || this.player[playerNum].pos.row > this.row-1 ||
             this.player[playerNum].snakeStack[head].css("background-color") !== this.whiteSpace) {
                 this.gameOver();
                 return -1;
@@ -147,7 +148,7 @@ class Snake {
 
             //default values if not sent to the method:
             if (pos === undefined)
-                pos = {col: this.col_row-2, row: this.col_row-2};
+                pos = {col: this.col-2, row: this.row-2};
 
             if (dir === undefined)
                 dir = "left";

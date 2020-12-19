@@ -26,25 +26,26 @@ router.get('/highscores/:difficulty', async function(req, res) {
 });
 
 router.post('/highscore', async function(req, res) {
-	//should get: score, difficulty, name, snake_stacks, board_size
+	//should get: score, difficulty, name, snakeStacks, boardCol, boardRow
 	//required only: score, difficulty, name
 	const highScore = new Highscore({ ...req.body });
 	highScore.name.replace(new RegExp('[^a-zA-Z0-9_. )(&-]', 'g'), "").trim();
 
-	const snakeStacks = req.body.snake_stacks;
-	const boardSize = req.body.board_size;
+	const snakeStacks = req.body.snakeStacks;
+	const boardCol = req.body.boardCol;
+	const boardRow = req.body.boardRow;
 
 	if (highScore.name.length < 1 || highScore.name.length > 10)
 		highScore.name = "Unknown";
 
-	if (ENUM_DIFFICULTY.indexOf(highScore.difficulty) === -1 || !highScore.score || !snakeStacks || !boardSize ) {
+	if (ENUM_DIFFICULTY.indexOf(highScore.difficulty) === -1 || !highScore.score || !snakeStacks || !boardCol || !boardRow ) {
 		res.send(null);
 		return;
 	}
 
 	try {
 		//calculate if legal score and save to DB if everything is OK
-		if (highScore.score === (snakeStacks -3) * 10 && highScore.score <= boardSize * boardSize) {
+		if (highScore.score === (snakeStacks -3) * 10 && highScore.score <= boardCol * boardRow) {
 			await highScore.save();
 			res.send(req.body);
 		}

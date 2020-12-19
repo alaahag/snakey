@@ -13,26 +13,28 @@ header {
     text-align: center;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: max-content;
+    grid-template-rows: 28px;
     border: 2px outset black;
     background-color: black;
     font-size: 140%;
     font-weight: bold;
     text-transform: uppercase;
     color: #bfe30e;
+    width: 99.8%;
 }
 
 #grid-container {
     display: grid;
-    grid-template-columns: repeat(25, 4%);
-    grid-template-rows: repeat(25, 4%);
+    /* will be used dynamically:
+    /* grid-template-columns: repeat(25, 4%);
+    grid-template-rows: repeat(25, 4%); */
     border: 2px solid black;
-    background: url('../images/back.jpg') right center;
+    background: url('../images/back.jpg') round fixed;
 }
 
 .cell {
     animation: blinkingCell 0.5s infinite;
-    border-radius: 12px;
+    border-radius: 8px;
     background-position: center center;
     background-size: 80%;
     background-repeat: no-repeat;

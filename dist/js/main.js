@@ -16,22 +16,33 @@ const HEADS = {
             head_right2: preloadImage("../images/head_right2.png")
 };
 
-const sounds = {
+const SOUNDS = {
     "collect": new Audio('audio/collect.mp3'),
     "game_over": new Audio('audio/game_over.mp3')
 };
 
 const fixedPageSize = function() {
-    const grid = $("#grid-container");
-    const fixedScreen = $(window).height() < $(window).width() ? $(window).height() : $(window).width();
-    grid.css("width", fixedScreen);
-    grid.css("height", fixedScreen);
-    $("header").css("width", fixedScreen);
-    return grid;
+    //TODO
+    if ($(window).height() < $(window).width()) {
+        const heightRatio = parseFloat(($(window).height()-36) * 0.04).toFixed(1);
+        const width = Math.floor(parseFloat($(window).width() / heightRatio));
+        $("#grid-container").css("grid-template-rows", `repeat(25, ${heightRatio}px)`).css("grid-template-columns", `repeat(${width}, ${heightRatio}px)`);
+        return {width, height: 25};
+    }
+    else {
+        const widthRatio = parseFloat($(window).width() * 0.04).toFixed(1);
+        const height = Math.floor((parseFloat($(window).height()-36) / widthRatio));
+        $("#grid-container").css("grid-template-rows", `repeat(${height}, ${widthRatio}px)`).css("grid-template-columns", `repeat(25, ${widthRatio}px)`);
+        return {width: 25, height};
+    }
 };
 
 $(window).on("resize", function() {
-    fixedPageSize();
+    if (!board.start) {
+        const pageSize = fixedPageSize();
+        board.col = pageSize.height;
+        board.row = pageSize.width;
+    }
 });
 
 $("#difficulty").on("change", function() {
@@ -58,10 +69,8 @@ const updateScoreTable = async function() {
     catch {}
 };
 
-fixedPageSize();
-
 //important: if you change cell-sizes, make sure to modify also the styles grid
-const board = new Snake(25);
+const board = new Snake(fixedPageSize());
 $("#btn_one_player").on("click", function() {
     board.startGame(1);
 });
@@ -75,7 +84,7 @@ $("#btn_play_again").on("click", function() {
 });
 
 $("#form_submit_score").on("submit", async function() {
-    const isUpdated = await $.post('/highscore', {score: board.player[1].score, difficulty: board.player[1].difficulty, name: $("#txt_submit_score").val(), snake_stacks: board.player[1].snakeStack.length, board_size: board.col_row});
+    const isUpdated = await $.post('/highscore', {score: board.player[1].score, difficulty: board.player[1].difficulty, name: $("#txt_submit_score").val(), snakeStacks: board.player[1].snakeStack.length, boardCol: board.col, boardRow: board.row});
     if (isUpdated)
         await updateScoreTable();
 

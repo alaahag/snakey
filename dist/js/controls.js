@@ -1,6 +1,6 @@
 $("body").swipe({
     swipe: function(event, direction, distance, duration, fingerCount, fingerData) {
-        //for player 1 only
+        //touch for player 1 only
         switch (direction) {
             case "up":
                 board.movePlayer(1, "up");
@@ -19,13 +19,13 @@ $("body").swipe({
                 break;
         }
     },
-    threshold:0,
-    fingers:'all'
+    threshold: 0,
+    fingers: 'all'
 });
 
 $(document).on('keydown', function(e) {
     switch (e.key) {
-        //player 1
+        //player 1 keys
         case "ArrowLeft":
             board.movePlayer(1, "left");
             break;
@@ -42,7 +42,7 @@ $(document).on('keydown', function(e) {
             board.movePlayer(1, "down");
             break;
 
-        //player 2
+        //player 2 keys
         case "a":
         case "A":
             board.movePlayer(2, "left");
