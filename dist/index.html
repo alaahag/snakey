@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="./css/styles.css" rel="stylesheet" type='text/css'>
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Righteous&display=swap" rel="stylesheet">
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/jquery-touchswipe/jquery.touchSwipe.min.js"></script>
     <script src="./js/snake.js"></script>
@@ -16,15 +16,15 @@
 <body>
     <header>
         <div><span id="label_p1">Score: </span><span id="score_p1">0</span></div>
-        <div><span id="label_p2_or_highest">Highest: </span><span id="score_p2_or_highest">0</span></div>
+        <div><span id="label_p2_or_highest">Best: </span><span id="score_p2_or_highest">0</span></div>
     </header>
     <div id="grid-container"></div>
     <div id="menu">
         <span id="menu_title">Snakey</span>
-        <button id="btn_one_player" class="noSwipe">1 Player</button>
-        <button id="btn_two_player" class="noSwipe">2 Players</button>
+        <button type="button" id="btn_one_player" class="noSwipe">1 Player</button>
+        <button type="button" id="btn_two_player" class="noSwipe">2 Players</button>
         <span id="credits">Game by MasterX</span>
-        <select id="difficulty" name="difficulty" class="select-css noSwipe">
+        <select id="difficulty" name="difficulty" class="select_diff noSwipe">
             <option value="150">Easy</option>
             <option value="100">Normal</option>
             <option value="50">Hard</option>
@@ -33,7 +33,15 @@
     </div>
     <div id="game_over">
         <span id="game_over_title">Game Over !</span>
-        <button id="btn_play_again" class="noSwipe">Try Again</button>
+        <hr>
+        <div id="highest_scores_title">Top 3 on <span id="difficulty_mode">Easy</span>-mode</div>
+        <ol>
+        </ol>
+        <form id="form_submit_score" action="javascript:;">
+            <input id="txt_submit_score" required type="text" placeholder="Enter your nick name" class="noSwipe" maxlength="10">
+            <button type="submit" class="noSwipe">Submit Score</button>
+        </form>
+        <button type="button" id="btn_play_again" class="noSwipe">Play Again</button>
     </div>
     <script src="./js/controls.js"></script>
     <script src="./js/main.js"></script>

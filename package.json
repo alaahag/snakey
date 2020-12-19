@@ -18,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/alaahag/snakey.git"
   },
-  "description": "A Javascript game (using jQuery)",
+  "description": "A MATRIX Javascript game (with jQuery)",
   "bugs": {
     "url": "https://github.com/alaahag/snakey/issues"
   },

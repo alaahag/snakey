@@ -7,19 +7,16 @@ body {
     flex-direction: column;
     background-color: #575b48;
     user-select: none;
-    justify-content: center;
 }
 
 header {
-    padding-bottom: 4px;
     text-align: center;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1em;
+    grid-template-rows: max-content;
     border: 2px outset black;
     background-color: black;
     font-size: 140%;
-    font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     text-transform: uppercase;
     color: #bfe30e;
@@ -29,33 +26,26 @@ header {
     display: grid;
     grid-template-columns: repeat(25, 4%);
     grid-template-rows: repeat(25, 4%);
-    height: 100%;
     border: 2px solid black;
-    background: url('../images/back.jpg');
-    background-position: right center;
+    background: url('../images/back.jpg') right center;
 }
 
 .cell {
-    animation:blinkingText 0.5s infinite;
-    font-size: 1.5vh;
-    font-weight: bolder;
-    border-radius: 15px;
+    animation: blinkingCell 0.5s infinite;
+    border-radius: 12px;
     background-position: center center;
-    background-size: 99%;
+    background-size: 80%;
     background-repeat: no-repeat;
 }
 
-@keyframes blinkingText {
-    0% { color: black; }
-    49% { color: black; }
-    60%{ background-size: 92%; }
-    99%{ background-size: 96%; }
-    100%{ color: black; }
+@keyframes blinkingCell {
+    60%{ background-size: 81%; }
+    100%{ background-size: 84%; }
 }
 
 #menu, #game_over {
     background-color: #2a2a2a;
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     width: 250px;
@@ -63,12 +53,11 @@ header {
     text-align: center;
     border-radius: 15px 15px;
     color: white;
-    font-family: Impact, 'Arial Narrow Bold', sans-serif;
     font-size: 170%;
     padding-top: 8px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    box-shadow: 10px 14px 22px rgb(0, 0, 0, 0.8);
+    box-shadow: 10px 14px 22px rgba(0, 0, 0, 0.8);
 }
 
 #menu {
@@ -76,15 +65,18 @@ header {
 }
 
 #game_over {
-    height: 115px;
+    height: 360px;
     display: none;
 }
 
-#menu_title, #game_over_title, #credits, .select-css {
+#credits, .select_diff {
     font-family: 'Acme', sans-serif;
 }
 
 #menu_title, #game_over_title {
+    font-family: 'Righteous', cursive;
+    font-weight: bold;
+    font-size: 100%;
     color:rgba(247, 211, 19, 0.93);
 }
 
@@ -111,17 +103,15 @@ button {
     font-weight: bold;
     color:#E5FFFF;
     background-color:#3BA4C7;
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1982A5', endColorstr='#1982A5',GradientType=0 );
-    background-image: linear-gradient(top, #3BA4C7 0% ,#1982A5 100%);
-    box-shadow:0px 0px 2px #bababa, inset 0px 0px 1px #ffffff;
+    box-shadow:0 0 2px #bababa, inset 0 0 1px #ffffff;
     cursor: pointer;
 }
 
-button:hover {
+button:hover:enabled {
     letter-spacing: 2px;
 }
 
-.select-css {
+.select_diff {
     text-align-last: center;
     appearance: none;
     top: 15px;
@@ -137,7 +127,6 @@ button:hover {
 	border: 1px solid #aaa;
 	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
 	border-radius: .5em;
-	appearance: none;
 	background-color: #fff;
 	background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
     linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
@@ -146,17 +135,86 @@ button:hover {
 	background-size: .65em auto, 100%;
 }
 
-.select-css:hover {
+.select_diff:hover {
 	border-color: #888;
 }
 
-.select-css:focus {
+.select_diff:focus {
 	border-color: #aaa;
 	box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
 	color: #222;
 	outline: none;
 }
 
-.select-css option {
+.select_diff option {
 	font-weight:normal;
+}
+
+#label_p1, #label_p2_or_highest {
+    font-family: 'Acme', sans-serif;
+    word-spacing: 3px;
+}
+
+#score_p1, #score_p2_or_highest {
+    font-family: 'Righteous', cursive;
+}
+
+#score_p1 {
+    color:rgb(237, 216, 8);
+}
+
+#score_p2_or_highest {
+    color: rgb(240, 81, 44);
+}
+
+ol {
+    color: #bfe30e;
+    text-align: left;
+}
+
+#highest_scores_title, ol {
+    font-size: 60%;
+    font-family: 'Acme', sans-serif;
+}
+
+#txt_submit_score {
+    text-align: center;
+    padding: 5px;
+    font-size: 16px;
+    border-width: 1px;
+    border-color: #CCCCCC;
+    color: #000000;
+    border-style: groove;
+    border-radius: .5em;
+    width: 88%;
+    box-shadow: 0 0 5px rgba(66,66,66,.75);
+    font-family: 'Acme', sans-serif;
+}
+
+#txt_submit_score:disabled {
+    background-color: darkgrey;
+    cursor: not-allowed;
+}
+
+#txt_submit_score:focus {
+    outline:none;
+}
+
+button[type=submit]:disabled {
+    background-color: darkgrey;
+    cursor: not-allowed;
+}
+
+.top_scores {
+    position: absolute;
+    right: 24px;
+}
+
+button[type=submit]:enabled {
+    animation: blinkingSubmit 0.5s infinite;
+}
+
+@keyframes blinkingSubmit {
+    60%{ background-color: #060606; }
+    100%{ background-color: darkgreen; }
 }

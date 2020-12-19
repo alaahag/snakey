@@ -1,19 +1,14 @@
 class Snake {
     constructor(size) {
-        //defaults:
         this.start = false;
-        this.col_row = size; //should be the same size
+        this.col_row = size; //row and col should be the same size
         this.whiteSpace = "rgba(0, 0, 0, 0)"; //white color is the default white-space
-        this.p1Color = "rgb(46, 153, 247)"; //if u don't like the colors, you can change it only here
-        this.p2Color = "rgb(240, 81, 44)"; //if u don't like the colors, you can change it only here
-        this.collectSymbol = SYMBOL.src;
-        this.player = []; //player[1] + player[2]
-        this.interval1 = null;
+        this.p1Color = "rgb(201, 190, 12)"; //if u don't like the snake's box colors, you can change it only here
+        this.p2Color = "rgb(191, 234, 82)"; //if u don't like the snake's box colors, you can change it only here
+        this.player = []; //for player[1] + player[2]
+        this.interval1 = null;  //for each player
         this.interval2 = null;
-        //example: this.player[playerNum] = {score: 0, pos: {col: nextCellCoords.col, row: nextCellCoords.row}, dir: dir, snakeStack: [playerCell, newPosition], pColor: playerColor};
 
-        $("#score_p1").css("color", this.p1Color);
-        $("#score_p2_or_highest").css("color", this.p2Color);
         this.generateCells(this.col_row);
     }
 
@@ -28,6 +23,11 @@ class Snake {
 
         this.modifySpeed($("#difficulty").find(":selected").val());
 
+        $("#label_p1").text("Score: ");
+        $("#label_p2_or_highest").text("Best: ");
+        this.initPlayer(1);
+        this.interval1 = setInterval(() => {this.autoMove(1);}, this.speed);
+
         if (playersNum === 2) {
             $("#label_p1").text("P1 Score: ");
             $("#label_p2_or_highest").text("P2 Score: ");
@@ -36,12 +36,9 @@ class Snake {
             this.interval2 = setInterval(() => {this.autoMove(2);}, this.speed);
         }
         else {
-            $("#label_p1").text("Score: ");
-            $("#label_p2_or_highest").text("Highest: ");
-            //TODO get highest score from DB
-            $("#score_p2_or_highest").text("0");
-            this.initPlayer(1);
-            this.interval1 = setInterval(() => {this.autoMove(1);}, this.speed);
+            //on solo only
+            this.player[1].difficulty = $("#difficulty option:selected").text().toLowerCase();
+            updateScoreTable();
         }
 
         this.start = true;
@@ -61,6 +58,27 @@ class Snake {
         clearInterval(this.interval1);
         clearInterval(this.interval2);
         $("#game_over").fadeIn();
+        if (this.player[2]) {
+            //no top scores for multiplayer
+            $("#txt_submit_score").prop('disabled', true);
+            $("button:submit").prop('disabled', true);
+            $("ol").css("text-decoration", "line-through");
+            $(".top_scores").css("text-decoration", "line-through");
+            $("#highest_scores_title").text("Unranked Game");
+        }
+        else {
+            const topScores = $(".top_scores");
+            if (this.player[1].score > 0 && this.player[1].score >= topScores[topScores.length-1].innerText) {
+                $("#txt_submit_score").prop('disabled', false);
+                $("button:submit").prop('disabled', false);
+            }
+            else {
+                $("#txt_submit_score").prop('disabled', true);
+                $("button:submit").prop('disabled', true);
+            }
+            $("ol").css("text-decoration", "none");
+            $("#highest_scores_title").html(`Top 3 on <span id="difficulty_mode">${this.player[1].difficulty}</span>-mode`);
+        }
     }
 
     generateCells(colRowNum) {
@@ -80,7 +98,7 @@ class Snake {
             checkFreeCell = $(`.c${col}_${row}`);
             if (checkFreeCell.css("background-color") === this.whiteSpace) {
                 if (checkFreeCell.css("background-image") === "none") {
-                    checkFreeCell.css("background-image", "url(" + this.collectSymbol + ")");
+                    checkFreeCell.css("background-image", "url(" + SYMBOL.src + ")");
                     break;
                 }
             }
@@ -88,6 +106,8 @@ class Snake {
     }
 
     updateScore(playerNum) {
+        this.player[playerNum].score += 10;
+
         let pSpan;
         if (playerNum === 1)
             pSpan =$("#score_p1");
@@ -112,7 +132,6 @@ class Snake {
         //detect apple (collect and add a new random apple on screen and increase snake length)
         if (this.player[playerNum].snakeStack[head].css("background-image") !== "none") {
             this.player[playerNum].snakeStack[head].css("background-image", "none");
-            this.player[playerNum].score+=10;
             this.updateScore(playerNum);
             this.createApple();
             return 1;
@@ -146,33 +165,33 @@ class Snake {
         else
             return;
 
-        const playerCell = $(`.c${pos.col}_${pos.row}`);
-        let nextCellCoords = this.moveHead(pos, dir);
+        const currentPlayerPos = $(`.c${pos.col}_${pos.row}`);
+        let newHeadPos = this.moveHead(pos, dir);
 
-        playerCell.css("background-color", playerColor);
-        const newPosition = $(`.c${nextCellCoords.col}_${nextCellCoords.row}`);
+        currentPlayerPos.css("background-color", playerColor);
+        const newPosition = $(`.c${newHeadPos.col}_${newHeadPos.row}`);
         newPosition.css("background-color", playerColor);
-        this.player[playerNum] = {score: 0, pos: {col: nextCellCoords.col, row: nextCellCoords.row}, dir: dir, snakeStack: [playerCell, newPosition], pColor: playerColor};
+        this.player[playerNum] = {score: 0, pos: {col: newHeadPos.col, row: newHeadPos.row}, dir: dir, snakeStack: [currentPlayerPos, newPosition], pColor: playerColor};
     }
 
     moveHead(pos, dir) {
         let position;
         switch (dir) {
             case "left":
-                position = {col: pos.col-1, row: pos.row};
+                position = {col: pos.col-1, row: pos.row, head: "head_left"};
                 break;
 
             case "right":
-                position = {col: pos.col+1, row: pos.row};
+                position = {col: pos.col+1, row: pos.row, head: "head_right"};
                 break;
 
             case "up":
-                position = {col: pos.col, row: pos.row - 1};
+                position = {col: pos.col, row: pos.row - 1, head: "head_up"};
                 break;
 
             //down
             default:
-                position = {col: pos.col, row: pos.row + 1};
+                position = {col: pos.col, row: pos.row + 1, head: "head_down"};
         }
 
         return position;
@@ -184,6 +203,7 @@ class Snake {
     }
 
     autoMove(playerNum) {
+        $(`.c${this.player[playerNum].pos.col}_${this.player[playerNum].pos.row}`).css("background-image", "none").css("background-color", this.player[playerNum].pColor);
         const nextCellCoords = this.moveHead(this.player[playerNum].pos, this.player[playerNum].dir);
         const newPosition = $(`.c${nextCellCoords.col}_${nextCellCoords.row}`);
         this.player[playerNum].snakeStack.push(newPosition);
@@ -191,7 +211,7 @@ class Snake {
         this.player[playerNum].pos.row = nextCellCoords.row;
         const isAppleEaten = this.checkCollision(playerNum);
         if (isAppleEaten !== -1) { //0 = not eaten apple, 1 = eaten apple, -1 = game over
-            newPosition.css("background-color", this.player[playerNum].pColor);
+            newPosition.css("background-image", "url(" + HEADS[nextCellCoords.head + playerNum].src + ")");
             if (isAppleEaten === 0)
                 this.removeTail(playerNum);
         }
