@@ -1,14 +1,15 @@
 class Snake {
     constructor(boardSize) {
-        this.start = false;
-        this.col = boardSize.width;
-        this.row= boardSize.height;
-        this.whiteSpace = "rgba(0, 0, 0, 0)"; //white color is the default white-space
-        this.p1Color = "rgb(201, 190, 12)"; //if u don't like the snake's box colors, you can change it only here
-        this.p2Color = "rgb(191, 234, 82)"; //if u don't like the snake's box colors, you can change it only here
-        this.player = []; //for player[1] + player[2]
-        this.interval1 = null;  //for each player
-        this.interval2 = null;
+        this.start = false; //start or stop game
+        this.detectScreenChange = false; //detect if user changed screen (resized) so we need to resize after game ends
+        this.col = boardSize.width; //automatically calculated
+        this.row= boardSize.height; //automatically calculated
+        this.whiteSpace = "rgba(0, 0, 0, 0)"; //white color is the default white-space, DO NOT TOUCH
+        this.p1Color = "rgb(254, 241, 37)"; //if u don't like the snake's box colors, you can change them
+        this.p2Color = "rgb(192, 255, 0)"; //same
+        this.player = []; //object for player[1] + player[2]
+        this.interval1 = null; //for player1
+        this.interval2 = null; //for player2
 
         this.generateCells(this.col, this.row);
     }
@@ -26,11 +27,24 @@ class Snake {
         this.createApple();
     }
 
+    rebuildOnResize() {
+        $("#grid-container").empty();
+        const newPageSize = fixedPageSize();
+        this.col = newPageSize.width;
+        this.row = newPageSize.height;
+        this.generateCells(this.col, this.row);
+        this.detectScreenChange = false;
+    }
+
     startGame(playersNum=1) {
+        //reset cells and rebuild them on screen change
+        if (this.detectScreenChange)
+            this.rebuildOnResize();
+
         $("#menu").fadeOut();
         $("#score_p1").text("0");
 
-        this.modifySpeed($("#difficulty").find(":selected").val());
+        this.speed = $("#difficulty").find(":selected").val();
 
         $("#label_p1").text("Score: ");
         $("#label_p2_or_highest").text("Best: ");
@@ -73,7 +87,7 @@ class Snake {
             $("button:submit").prop('disabled', true);
             $("ol").css("text-decoration", "line-through");
             $(".top_scores").css("text-decoration", "line-through");
-            $("#highest_scores_title").text("Unranked Game");
+            $("#highest_scores_title").text("Unrated Game");
         }
         else {
             const topScores = $(".top_scores");
@@ -97,11 +111,9 @@ class Snake {
             const col = Math.floor(Math.random() * this.col);
             const row = Math.floor(Math.random() * this.row);
             checkFreeCell = $(`.c${col}_${row}`);
-            if (checkFreeCell.css("background-color") === this.whiteSpace) {
-                if (checkFreeCell.css("background-image") === "none") {
-                    checkFreeCell.css("background-image", "url(" + SYMBOL.src + ")");
-                    break;
-                }
+            if (checkFreeCell.css("background-color") === this.whiteSpace && checkFreeCell.css("background-image") === "none") {
+                checkFreeCell.css("background-image", "url(" + SYMBOL.src + ")");
+                break;
             }
         }
     }
@@ -167,12 +179,12 @@ class Snake {
             return;
 
         const currentPlayerPos = $(`.c${pos.col}_${pos.row}`);
-        let newHeadPos = this.moveHead(pos, dir);
+        let nextCellCoords = this.moveHead(pos, dir);
 
         currentPlayerPos.css("background-color", playerColor);
-        const newPosition = $(`.c${newHeadPos.col}_${newHeadPos.row}`);
-        newPosition.css("background-color", playerColor);
-        this.player[playerNum] = {score: 0, pos: {col: newHeadPos.col, row: newHeadPos.row}, dir: dir, snakeStack: [currentPlayerPos, newPosition], pColor: playerColor};
+        const newPosition = $(`.c${nextCellCoords.col}_${nextCellCoords.row}`);
+        newPosition.css("background-image", "url(" + HEADS[nextCellCoords.head + playerNum].src + ")");
+        this.player[playerNum] = {score: 0, pos: {col: nextCellCoords.col, row: nextCellCoords.row}, dir: dir, snakeStack: [currentPlayerPos, newPosition], pColor: playerColor};
     }
 
     moveHead(pos, dir) {
@@ -232,9 +244,5 @@ class Snake {
                 return;
 
         this.player[playerNum].dir = dir;
-    }
-
-    modifySpeed(speed) {
-        this.speed = speed;
     }
 }

@@ -3,10 +3,10 @@ const router = express.Router();
 const Highscore = require('../models/Highscore.js');
 const ENUM_DIFFICULTY = ["easy", "normal", "hard", "insane"];
 
-router.get('/sanity', function(req, res) {
-	//200 = OK
-	res.sendStatus(200);
-});
+// router.get('/sanity', function(req, res) {
+// 	//200 = OK
+// 	res.sendStatus(200);
+// });
 
 router.get('/highscores/:difficulty', async function(req, res) {
 	const difficulty = req.params.difficulty;

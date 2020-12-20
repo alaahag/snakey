@@ -38,7 +38,13 @@ const fixedPageSize = function() {
 };
 
 $(window).on("resize", function() {
-    if (!board.start) {
+    if (board.start) {
+        if (!board.detectScreenChange) {
+            board.detectScreenChange = true;
+            alert("Screen size-change detected!\nThe game will automatically resize itself to fit your screen on next game-play.")
+        }
+    }
+    else {
         const pageSize = fixedPageSize();
         board.col = pageSize.height;
         board.row = pageSize.width;
@@ -51,22 +57,19 @@ $("#difficulty").on("change", function() {
 });
 
 const updateScoreTable = async function() {
-    try {
-        const res = await $.get(`/highscores/${difficulty}`);
-        $("#label_p2_or_highest").text("Best: ");
-        $("#score_p2_or_highest").text(res[0] ? res[0].score : 0);
-        $("#difficulty_mode").text(difficulty);
+    const res = await $.get(`/highscores/${difficulty}`);
+    $("#label_p2_or_highest").text("Best: ");
+    $("#score_p2_or_highest").text(res[0] ? res[0].score : 0);
+    $("#difficulty_mode").text(difficulty);
 
-        //fill top scores table
-        const ol = $("ol").empty();
-        for (let i=0; i<3; i++) {
-            if (res[i])
-                ol.append(`<li><span>${res[i].name}</span><span class="top_scores">${res[i].score}</span></li>`);
-            else
-                ol.append('<li><span>null</span><span class="top_scores">0</span></li>');
-        }
+    //fill top scores table
+    const ol = $("ol").empty();
+    for (let i=0; i<3; i++) {
+        if (res[i])
+            ol.append(`<li><span>${res[i].name}</span><span class="top_scores">${res[i].score}</span></li>`);
+        else
+            ol.append('<li><span>null</span><span class="top_scores">0</span></li>');
     }
-    catch {}
 };
 
 //important: if you change cell-sizes, make sure to modify also the styles grid

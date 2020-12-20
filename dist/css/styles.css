@@ -29,7 +29,7 @@ header {
     /* grid-template-columns: repeat(25, 4%);
     grid-template-rows: repeat(25, 4%); */
     border: 2px solid black;
-    background: url('../images/back.jpg') round fixed;
+    background: url('../images/back.jpg');
 }
 
 .cell {
@@ -38,6 +38,7 @@ header {
     background-position: center center;
     background-size: 80%;
     background-repeat: no-repeat;
+    margin: 1px;
 }
 
 @keyframes blinkingCell {
