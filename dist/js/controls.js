@@ -23,7 +23,7 @@ $("body").swipe({
     fingers: 'all'
 });
 
-$(document).on('keydown', function(e) {
+$(document).on('keydown', function(e){
     switch (e.key) {
         //player 1 keys
         case "ArrowLeft":

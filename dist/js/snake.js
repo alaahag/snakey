@@ -5,11 +5,12 @@ class Snake {
         this.col = boardSize.width; //automatically calculated
         this.row= boardSize.height; //automatically calculated
         this.whiteSpace = "rgba(0, 0, 0, 0)"; //white color is the default white-space, DO NOT TOUCH
-        this.p1Color = "rgb(254, 241, 37)"; //if u don't like the snake's box colors, you can change them
-        this.p2Color = "rgb(192, 255, 0)"; //same
+        this.p1Color = "rgb(254, 241, 37)"; //if u don't like the snake's box colors for player1, you can change it here
+        this.p2Color = "rgb(192, 255, 0)"; //same for player2
         this.player = []; //object for player[1] + player[2]
         this.interval1 = null; //for player1
         this.interval2 = null; //for player2
+        this.fireCount = 0; //counter for fire on screen (we need it for the backend validations)
 
         this.generateCells(this.col, this.row);
     }
@@ -27,7 +28,7 @@ class Snake {
         this.createApple();
     }
 
-    rebuildOnResize() {
+    rebuildOnWindowResize() {
         $("#grid-container").empty();
         const newPageSize = fixedPageSize();
         this.col = newPageSize.width;
@@ -37,9 +38,11 @@ class Snake {
     }
 
     startGame(playersNum=1) {
-        //reset cells and rebuild them on screen change
+        //reset cells and rebuild them on screen size change
         if (this.detectScreenChange)
-            this.rebuildOnResize();
+            this.rebuildOnWindowResize();
+
+        this.generateFire();
 
         $("#menu").fadeOut();
         $("#score_p1").text("0");
@@ -49,17 +52,17 @@ class Snake {
         $("#label_p1").text("Score: ");
         $("#label_p2_or_highest").text("Best: ");
         this.initPlayer(1);
-        this.interval1 = setInterval(() => {this.autoMove(1);}, this.speed);
+        this.interval1 = setInterval(() => { this.autoMove(1); }, this.speed);
 
         if (playersNum === 2) {
             $("#label_p1").text("P1 Score: ");
             $("#label_p2_or_highest").text("P2 Score: ");
             $("#score_p2_or_highest").text("0");
             this.initPlayer(2);
-            this.interval2 = setInterval(() => {this.autoMove(2);}, this.speed);
+            this.interval2 = setInterval(() => { this.autoMove(2); }, this.speed);
         }
         else {
-            //on solo only
+            //on solo play only
             this.player[1].difficulty = $("#difficulty option:selected").text().toLowerCase();
             updateScoreTable();
         }
@@ -73,6 +76,7 @@ class Snake {
         $(".cell").css("background-color", "rgba(0, 0, 0, 0)").css("background-image", "none");
         delete this.player;
         this.player = [];
+        this.fireCount = 0;
         this.start = false;
     }
 
@@ -82,7 +86,7 @@ class Snake {
         clearInterval(this.interval2);
         $("#game_over").fadeIn();
         if (this.player[2]) {
-            //no top scores for multiplayer
+            //no top 3 best scores for multiplayer
             $("#txt_submit_score").prop('disabled', true);
             $("button:submit").prop('disabled', true);
             $("ol").css("text-decoration", "line-through");
@@ -112,8 +116,21 @@ class Snake {
             const row = Math.floor(Math.random() * this.row);
             checkFreeCell = $(`.c${col}_${row}`);
             if (checkFreeCell.css("background-color") === this.whiteSpace && checkFreeCell.css("background-image") === "none") {
-                checkFreeCell.css("background-image", "url(" + SYMBOL.src + ")");
+                checkFreeCell.css("background-image", "url(" + APPLE.src + ")");
                 break;
+            }
+        }
+    }
+
+    generateFire() {
+        //generate fire borders on screen
+        for (let row=Math.floor(parseFloat(this.row * 0.3)); row<Math.floor(parseFloat(this.row * 0.7)); row+=3) {
+            for (let col=Math.floor(parseFloat(this.col * 0.3)); col<Math.floor(parseFloat(this.col * 0.7)); col+=3) {
+                const checkFreeCell = $(`.c${col}_${row}`);
+                if (checkFreeCell.css("background-color") === this.whiteSpace && checkFreeCell.css("background-image") === "none") {
+                    checkFreeCell.css("background-image", "url(" + FIRE.src + ")");
+                    this.fireCount++;
+                }
             }
         }
     }
@@ -133,17 +150,18 @@ class Snake {
 
     checkCollision(playerNum) {
         const head = this.player[playerNum].snakeStack.length-1;
+        const img = this.player[playerNum].snakeStack[head].css("background-image");
 
-        //detect hitting borders or snakes (game over)
+        //detect hitting borders or snakes or fire (game over)
         if (this.player[playerNum].pos.col < 0 || this.player[playerNum].pos.col > this.col-1 ||
             this.player[playerNum].pos.row < 0 || this.player[playerNum].pos.row > this.row-1 ||
+            img.includes(FIRE.src) ||
             this.player[playerNum].snakeStack[head].css("background-color") !== this.whiteSpace) {
                 this.gameOver();
                 return -1;
-            }
-
-        //detect apple (collect and add a new random apple on screen and increase snake length)
-        if (this.player[playerNum].snakeStack[head].css("background-image") !== "none") {
+        }
+        else if (img.includes(APPLE.src)) {
+            //if touched apple, we collect it
             this.player[playerNum].snakeStack[head].css("background-image", "none");
             this.updateScore(playerNum);
             this.createApple();
@@ -158,9 +176,9 @@ class Snake {
         if (playerNum === 1) {
             playerColor = this.p1Color;
 
-            //default values if not sent to the method:
+            //default values if no args
             if (pos === undefined)
-                pos = {col: this.col-2, row: this.row-2};
+                pos = { col: this.col-2, row: this.row-2 };
 
             if (dir === undefined)
                 dir = "left";
@@ -168,9 +186,9 @@ class Snake {
         else if(playerNum === 2) {
             playerColor = this.p2Color;
 
-            //default values if not sent to the method:
+            //default values if no args
             if (pos === undefined)
-                pos = {col: 1, row: 1};
+                pos = { col: 1, row: 1 };
 
             if (dir === undefined)
                 dir = "right";
@@ -191,26 +209,27 @@ class Snake {
         let position;
         switch (dir) {
             case "left":
-                position = {col: pos.col-1, row: pos.row, head: "head_left"};
+                position = { col: pos.col-1, row: pos.row, head: "head_left" };
                 break;
 
             case "right":
-                position = {col: pos.col+1, row: pos.row, head: "head_right"};
+                position = { col: pos.col+1, row: pos.row, head: "head_right" };
                 break;
 
             case "up":
-                position = {col: pos.col, row: pos.row - 1, head: "head_up"};
+                position = { col: pos.col, row: pos.row - 1, head: "head_up" };
                 break;
 
             //down
             default:
-                position = {col: pos.col, row: pos.row + 1, head: "head_down"};
+                position = { col: pos.col, row: pos.row + 1, head: "head_down" };
         }
 
         return position;
     }
 
     removeTail(playerNum) {
+        //remove snake tail
         this.player[playerNum].snakeStack[0].css("background-color", this.whiteSpace);
         this.player[playerNum].snakeStack.shift();
     }
@@ -223,7 +242,9 @@ class Snake {
         this.player[playerNum].pos.col = nextCellCoords.col;
         this.player[playerNum].pos.row = nextCellCoords.row;
         const isAppleEaten = this.checkCollision(playerNum);
-        if (isAppleEaten !== -1) { //0 = not eaten apple, 1 = eaten apple, -1 = game over
+
+        //0 = not eaten apple, 1 = eaten apple, -1 = game over
+        if (isAppleEaten !== -1) {
             newPosition.css("background-image", "url(" + HEADS[nextCellCoords.head + playerNum].src + ")");
             if (isAppleEaten === 0)
                 this.removeTail(playerNum);
@@ -236,7 +257,7 @@ class Snake {
         if (this.player[playerNum] === undefined || this.player[playerNum].dir === dir || !this.start)
             return;
 
-        //so you don't kill yourself accidentally
+        //this will prevent you from killing yourself accidentally
         if  ((dir === "left" && this.player[playerNum].dir === "right") ||
             (dir === "right" && this.player[playerNum].dir === "left") ||
             (dir === "up" && this.player[playerNum].dir === "down") ||

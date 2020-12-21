@@ -1,6 +1,6 @@
 # Snakey (Game)
 
-A MATRIX Javascript game (with jQuery)
+* A MATRIX JavaScript game (with jQuery)
 
 Supports Solo and 1vs1 play.
 
