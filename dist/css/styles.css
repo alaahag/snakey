@@ -34,7 +34,7 @@ header {
 
 .cell {
     animation: blinkingCell 0.5s infinite;
-    border-radius: 8px;
+    border-radius: 30%;
     background-position: center center;
     background-size: 80%;
     background-repeat: no-repeat;
