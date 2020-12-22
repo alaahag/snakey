@@ -63,7 +63,9 @@ const updateScoreTable = async function(){
     $("#difficulty_mode").text(difficulty);
 
     //fill top scores table
-    const ol = $("ol").empty();
+    $("ol").remove();
+    $("#highest_scores_title").after("<ol></ol>");
+    const ol = $("ol");
     for (let i=0; i<3; i++) {
         if (res[i])
             ol.append(`<li><span>${res[i].name}</span><span class="top_scores">${res[i].score}</span></li>`);

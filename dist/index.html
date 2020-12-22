@@ -2,29 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" type="image/png" href="./icon.png">
-    <title>Snakey | Classic Snake Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link href="./css/styles.css" rel="stylesheet" type='text/css'>
+    <meta name="description" content="Snakey | Classic Snake Game">
+    <meta name="author" content="Ala H.Yahya - MasterX">
+    <title>Snakey | Classic Snake Game</title>
+    <link rel="icon" type="image/png" href="./icon.png">
+    <link rel="stylesheet" href="/css/styles.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Acme&family=Righteous&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Acme&family=Righteous&display=swap">
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/jquery-touchswipe/jquery.touchSwipe.min.js"></script>
-    <script src="./js/snake.js"></script>
+    <script src="/js/snake.js"></script>
 </head>
 <body>
     <header>
-        <div><span id="label_p1">Score: </span><span id="score_p1">0</span></div>
-        <div><span id="label_p2_or_highest">Best: </span><span id="score_p2_or_highest">0</span></div>
+        <div><span id="label_p1"></span><span id="score_p1"></span></div>
+        <div><span id="label_p2_or_highest"></span><span id="score_p2_or_highest"></span></div>
     </header>
     <div id="grid-container"></div>
     <div id="menu">
         <span id="menu_title">Snakey</span>
-        <button type="button" id="btn_one_player" class="noSwipe">1 Player</button>
-        <button type="button" id="btn_two_player" class="noSwipe">2 Players</button>
+        <button id="btn_one_player" class="noSwipe" type="button">1 Player</button>
+        <button id="btn_two_player" class="noSwipe" type="button">2 Players</button>
         <span id="credits">Game by MasterX</span>
-        <select id="difficulty" name="difficulty" class="select_diff noSwipe">
+        <select id="difficulty" class="select_diff noSwipe">
             <option value="150">Easy</option>
             <option value="100" selected>Normal</option>
             <option value="50">Hard</option>
@@ -34,16 +35,14 @@
     <div id="game_over">
         <span id="game_over_title">Game Over !</span>
         <hr>
-        <div id="highest_scores_title">Top 3 on <span id="difficulty_mode">Easy</span>-mode</div>
-        <ol>
-        </ol>
+        <div id="highest_scores_title"></div>
         <form id="form_submit_score" action="javascript:;">
-            <input id="txt_submit_score" required type="text" placeholder="Enter your nick name" class="noSwipe" maxlength="10">
-            <button type="submit" class="noSwipe">Submit Score</button>
+            <input id="txt_submit_score" class="noSwipe" type="text" placeholder="Enter your nick name" required maxlength="10">
+            <button class="noSwipe" type="submit">Submit Score</button>
         </form>
-        <button type="button" id="btn_play_again" class="noSwipe">Play Again</button>
+        <button id="btn_play_again" class="noSwipe" type="button">Play Again</button>
     </div>
-    <script src="./js/controls.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="/js/controls.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 </html>
