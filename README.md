@@ -2,7 +2,7 @@
 
 A full-stack MATRIX JavaScript game.
 
-**Technology Stack**: Express, Mongoose, Node & jQuery.
+**Technology Stack**: Express, Mongoose, NodeJS & jQuery.
 
 ```
 Supports Solo and 1vs1 play.
